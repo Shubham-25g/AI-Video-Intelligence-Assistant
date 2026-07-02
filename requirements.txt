@@ -3,6 +3,7 @@ langchain
 langchain-chroma
 langchain-mistralai
 langchain-text-splitters
+langchain-community
 whisper
 pydub
 yt-dlp
