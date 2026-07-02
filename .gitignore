@@ -1,0 +1,25 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Environment Variables (Contains your API Keys!)
+.env
+
+# Local Database and temporary download storage
+Vector_DB/
+Downloads/
+
+# Python caching files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.history/
+
+# Operating system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
