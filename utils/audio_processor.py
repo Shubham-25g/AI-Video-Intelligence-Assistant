@@ -22,6 +22,12 @@ def download_youtube_audio(url: str) -> str:
         "no_warnings": True,
     }
     
+    # UPGRADE: Fetch a clean proxy URL from the environment if available
+    proxy_url = os.getenv("PROXY_URL")
+    if proxy_url:
+        print(f"Routing traffic through cloud proxy target...")
+        ydl_opts["proxy"] = proxy_url
+    
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
@@ -29,12 +35,11 @@ def download_youtube_audio(url: str) -> str:
         return filename
     except yt_dlp.utils.DownloadError as e:
         error_msg = str(e)
-        # Catch cloud data-center IP bans from YouTube's firewall
         if "403" in error_msg or "Forbidden" in error_msg:
             raise RuntimeError(
-                "🛑 YouTube has blocked this cloud server's public IP address (HTTP 403 Forbidden).\n\n"
-                "Because Streamlit Cloud runs on public data center servers (AWS), YouTube frequently blacklists their entire network to prevent scraping bots.\n\n"
-                "⚡ **How to bypass this instantly:** Switch to the **'📁 Upload Local File Asset'** tab at the top of the page and drag-and-drop your audio/video file directly! It will process flawlessly without hitting external network restrictions."
+                "🛑 YouTube blocked the request (HTTP 403 Forbidden).\n\n"
+                "If you haven't configured a proxy yet, please add a clean 'PROXY_URL' to your Streamlit Advanced Secrets.\n\n"
+                "As a temporary backup, you can still drop files using the '📁 Upload Local File Asset' tab above!"
             )
         else:
             raise RuntimeError(f"Media extraction failed: {error_msg}")
