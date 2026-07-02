@@ -9,6 +9,7 @@ An enterprise-grade **AI Video Intelligence Assistant** that automates the trans
 🚀 **Application:** https://ai-video-intelligence-assistant.streamlit.app/
 
 📂 **GitHub Repository:** https://github.com/Shubham-25g/AI-Video-Intelligence-Assistant
+
 ---
 
 # ✨ Features
