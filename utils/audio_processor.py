@@ -20,6 +20,14 @@ def download_youtube_audio(url: str) -> str:
         ],
         "quiet": True,
         "no_warnings": True,
+        
+        # BYPASS CONFIGURATION: Force client layers that do not aggressively enforce PO tokens
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["web_safari", "android_vr"],
+                "formats": ["missing_pot"]
+            }
+        }
     }
     
     # 1. Apply Cloud Proxy if configured
@@ -27,14 +35,18 @@ def download_youtube_audio(url: str) -> str:
     if proxy_url:
         ydl_opts["proxy"] = proxy_url
         
-    # 2. UPGRADE: Authenticate using Cloud Secrets Cookies if configured
+    # 2. Authenticate using Cloud Secrets Cookies if configured
     cookies_content = os.getenv("YT_COOKIES")
     temp_cookies_path = os.path.join(DOWNLOAD_DIR, "temp_cookies.txt")
     
     if cookies_content:
-        print("Injecting secure browser authentication session cookies...")
+        print("Injecting normalized browser authentication session cookies...")
+        # Clean up any potential copy-paste formatting anomalies from the cloud environment
+        cleaned_lines = [line.strip() for line in cookies_content.strip().splitlines() if line.strip()]
+        cleaned_cookies = "\n".join(cleaned_lines)
+        
         with open(temp_cookies_path, "w", encoding="utf-8") as f:
-            f.write(cookies_content.strip())
+            f.write(cleaned_cookies + "\n")
         ydl_opts["cookiefile"] = temp_cookies_path
     
     try:
