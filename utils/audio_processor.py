@@ -9,8 +9,8 @@ def download_youtube_audio(url: str) -> str:
     output_path = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
     
     ydl_opts = {
-        # Fallback to combined best stream format if split audio fragments trigger a 403
-        "format": "best", 
+        # Try to get audio-only first to save bandwidth; fall back to best combined stream if needed
+        "format": "bestaudio/best", 
         "outtmpl": output_path,
         "postprocessors": [
             {
@@ -21,15 +21,15 @@ def download_youtube_audio(url: str) -> str:
         ],
         "quiet": True,
         
-        # ADVANCED CLOUD BYPASS: Use the embedded player engine to sidestep rate limits
+        # Sequential client fallback chain: cycles through engines if one lacks formats or drops a 403
         "extractor_args": {
             "youtube": {
-                "player_client": ["web_embedded"]
+                "player_client": ["android", "ios", "mweb", "web_embedded"]
             }
         },
         "http_headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept": "*/*",
             "Accept-Language": "en-US,en;q=0.5",
         }
     }
