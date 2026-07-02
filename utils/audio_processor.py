@@ -9,7 +9,9 @@ def download_youtube_audio(url: str) -> str:
     output_path = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
     
     ydl_opts = {
-        "format": "bestaudio/best", 
+        # FIX: Accept any best available stream (video or audio). 
+        # Since ffmpeg is installed, it will automatically strip out the audio afterward.
+        "format": "best", 
         "outtmpl": output_path,
         "postprocessors": [
             {
@@ -21,11 +23,10 @@ def download_youtube_audio(url: str) -> str:
         "quiet": True,
         "no_warnings": True,
         
-        # BYPASS CONFIGURATION: Force client layers that do not aggressively enforce PO tokens
+        # Open up standard client endpoints to maximize accessible formats
         "extractor_args": {
             "youtube": {
-                "player_client": ["web_safari", "android_vr"],
-                "formats": ["missing_pot"]
+                "player_client": ["android", "ios", "web", "mweb"]
             }
         }
     }
@@ -41,7 +42,6 @@ def download_youtube_audio(url: str) -> str:
     
     if cookies_content:
         print("Injecting normalized browser authentication session cookies...")
-        # Clean up any potential copy-paste formatting anomalies from the cloud environment
         cleaned_lines = [line.strip() for line in cookies_content.strip().splitlines() if line.strip()]
         cleaned_cookies = "\n".join(cleaned_lines)
         
