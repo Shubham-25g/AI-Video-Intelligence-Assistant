@@ -9,7 +9,6 @@ def download_youtube_audio(url: str) -> str:
     output_path = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
     
     ydl_opts = {
-        # Try to get audio-only first to save bandwidth; fall back to best combined stream if needed
         "format": "bestaudio/best", 
         "outtmpl": output_path,
         "postprocessors": [
@@ -20,24 +19,25 @@ def download_youtube_audio(url: str) -> str:
             }
         ],
         "quiet": True,
-        
-        # Sequential client fallback chain: cycles through engines if one lacks formats or drops a 403
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["android", "ios", "mweb", "web_embedded"]
-            }
-        },
-        "http_headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "Accept": "*/*",
-            "Accept-Language": "en-US,en;q=0.5",
-        }
+        "no_warnings": True,
     }
     
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info).replace(".webm", ".wav").replace(".m4a", ".wav")
-    return filename
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            filename = ydl.prepare_filename(info).replace(".webm", ".wav").replace(".m4a", ".wav")
+        return filename
+    except yt_dlp.utils.DownloadError as e:
+        error_msg = str(e)
+        # Catch cloud data-center IP bans from YouTube's firewall
+        if "403" in error_msg or "Forbidden" in error_msg:
+            raise RuntimeError(
+                "🛑 YouTube has blocked this cloud server's public IP address (HTTP 403 Forbidden).\n\n"
+                "Because Streamlit Cloud runs on public data center servers (AWS), YouTube frequently blacklists their entire network to prevent scraping bots.\n\n"
+                "⚡ **How to bypass this instantly:** Switch to the **'📁 Upload Local File Asset'** tab at the top of the page and drag-and-drop your audio/video file directly! It will process flawlessly without hitting external network restrictions."
+            )
+        else:
+            raise RuntimeError(f"Media extraction failed: {error_msg}")
 
 
 def convert_to_wav(input_path: str) -> str:
