@@ -9,7 +9,8 @@ def download_youtube_audio(url: str) -> str:
     output_path = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
     
     ydl_opts = {
-        "format": "bestaudio/best",
+        # Fallback to combined best stream format if split audio fragments trigger a 403
+        "format": "best", 
         "outtmpl": output_path,
         "postprocessors": [
             {
@@ -20,16 +21,15 @@ def download_youtube_audio(url: str) -> str:
         ],
         "quiet": True,
         
-        # CLOUD FIX: Spoof client types to bypass data center IP blocks
+        # ADVANCED CLOUD BYPASS: Use the embedded player engine to sidestep rate limits
         "extractor_args": {
             "youtube": {
-                "player_client": ["android", "web"]
+                "player_client": ["web_embedded"]
             }
         },
-        # Introduce generic desktop headers to mask headless server requests
         "http_headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
         }
     }
@@ -44,7 +44,7 @@ def convert_to_wav(input_path: str) -> str:
     """Convert any audio/video file to WAV format using pydub."""
     output_path = os.path.splitext(input_path)[0] + "_converted.wav"
     audio = AudioSegment.from_file(input_path)
-    audio = audio.set_channels(1).set_frame_rate(16000) # 16khz
+    audio = audio.set_channels(1).set_frame_rate(16000)
     audio.export(output_path, format="wav")
     return output_path
 
