@@ -22,27 +22,37 @@ def download_youtube_audio(url: str) -> str:
         "no_warnings": True,
     }
     
-    # UPGRADE: Fetch a clean proxy URL from the environment if available
+    # 1. Apply Cloud Proxy if configured
     proxy_url = os.getenv("PROXY_URL")
     if proxy_url:
-        print(f"Routing traffic through cloud proxy target...")
         ydl_opts["proxy"] = proxy_url
+        
+    # 2. UPGRADE: Authenticate using Cloud Secrets Cookies if configured
+    cookies_content = os.getenv("YT_COOKIES")
+    temp_cookies_path = os.path.join(DOWNLOAD_DIR, "temp_cookies.txt")
+    
+    if cookies_content:
+        print("Injecting secure browser authentication session cookies...")
+        with open(temp_cookies_path, "w", encoding="utf-8") as f:
+            f.write(cookies_content.strip())
+        ydl_opts["cookiefile"] = temp_cookies_path
     
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info).replace(".webm", ".wav").replace(".m4a", ".wav")
         return filename
+        
     except yt_dlp.utils.DownloadError as e:
-        error_msg = str(e)
-        if "403" in error_msg or "Forbidden" in error_msg:
-            raise RuntimeError(
-                "🛑 YouTube blocked the request (HTTP 403 Forbidden).\n\n"
-                "If you haven't configured a proxy yet, please add a clean 'PROXY_URL' to your Streamlit Advanced Secrets.\n\n"
-                "As a temporary backup, you can still drop files using the '📁 Upload Local File Asset' tab above!"
-            )
-        else:
-            raise RuntimeError(f"Media extraction failed: {error_msg}")
+        raise RuntimeError(f"Media extraction failed: {str(e)}")
+        
+    finally:
+        # Guarantee that the temporary cookie file is deleted immediately for safety
+        if os.path.exists(temp_cookies_path):
+            try:
+                os.remove(temp_cookies_path)
+            except Exception:
+                pass
 
 
 def convert_to_wav(input_path: str) -> str:
