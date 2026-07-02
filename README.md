@@ -6,10 +6,9 @@ An enterprise-grade **AI Video Intelligence Assistant** that automates the trans
 
 ## 🌐 Live Demo
 
-🚀 **Application:** [https://ai-video-intelligence.streamlit.app/](https://www.google.com/search?q=https://ai-video-intelligence.streamlit.app/) *(Replace with your live URL)*
+🚀 **Application:** https://ai-video-intelligence-assistant.streamlit.app/
 
-📂 **GitHub Repository:** [https://github.com/Shubham-25g/AI-Video-Intelligence-Assistant](https://www.google.com/search?q=https://github.com/Shubham-25g/AI-Video-Intelligence-Assistant) *(Replace with your repo URL)*
-
+📂 **GitHub Repository:** https://github.com/Shubham-25g/AI-Video-Intelligence-Assistant
 ---
 
 # ✨ Features
@@ -161,4 +160,4 @@ This project demonstrates practical experience with:
 
 * GitHub: [https://github.com/Shubham-25g](https://github.com/Shubham-25g)
 * LinkedIn: [www.linkedin.com/in/shubhamgupta2510](https://www.google.com/search?q=https://www.linkedin.com/in/shubhamgupta2510)
-* Live Demo: [https://ai-video-intelligence.streamlit.app/](https://www.google.com/search?q=https://ai-video-intelligence.streamlit.app/) *(Replace with actual link)*
+* Live Demo: https://ai-video-intelligence-assistant.streamlit.app/
