@@ -9,8 +9,6 @@ def download_youtube_audio(url: str) -> str:
     output_path = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
     
     ydl_opts = {
-        # FIX: Accept any best available stream (video or audio). 
-        # Since ffmpeg is installed, it will automatically strip out the audio afterward.
         "format": "best", 
         "outtmpl": output_path,
         "postprocessors": [
@@ -23,7 +21,6 @@ def download_youtube_audio(url: str) -> str:
         "quiet": True,
         "no_warnings": True,
         
-        # Open up standard client endpoints to maximize accessible formats
         "extractor_args": {
             "youtube": {
                 "player_client": ["android", "ios", "web", "mweb"]
@@ -52,14 +49,15 @@ def download_youtube_audio(url: str) -> str:
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
-            filename = ydl.prepare_filename(info).replace(".webm", ".wav").replace(".m4a", ".wav")
+            # FIX: Dynamically strip ANY video container extension and target the extracted .wav tracking path
+            base_path = os.path.splitext(ydl.prepare_filename(info))[0]
+            filename = base_path + ".wav"
         return filename
         
     except yt_dlp.utils.DownloadError as e:
         raise RuntimeError(f"Media extraction failed: {str(e)}")
         
     finally:
-        # Guarantee that the temporary cookie file is deleted immediately for safety
         if os.path.exists(temp_cookies_path):
             try:
                 os.remove(temp_cookies_path)
