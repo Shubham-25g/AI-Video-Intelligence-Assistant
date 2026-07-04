@@ -5,6 +5,7 @@ langchain-mistralai
 langchain-text-splitters
 langchain-community
 openai-whisper
+sentence-transformers
 pydub
 yt-dlp
 requests
