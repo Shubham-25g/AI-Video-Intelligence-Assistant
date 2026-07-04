@@ -4,7 +4,7 @@ langchain-chroma
 langchain-mistralai
 langchain-text-splitters
 langchain-community
-whisper
+openai-whisper
 pydub
 yt-dlp
 requests
