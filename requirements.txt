@@ -13,3 +13,4 @@ fpdf2
 rank_bm25
 python-dotenv
 audioop-lts; python_version >= '3.13'
+torchvision
