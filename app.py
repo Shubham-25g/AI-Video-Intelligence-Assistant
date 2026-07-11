@@ -266,7 +266,7 @@ if "chat_history" not in st.session_state:
 st.markdown("""
 <div class="page-hdr">
     <div>
-        <div class="ph-title">AI Video <em>Assistant</em></div>
+        <div class="ph-title">AI Video Assistant</div>
         <div class="ph-sub">Analyze media, extract insights, and converse with assets natively.</div>
     </div>
     <div class="ph-badges">
