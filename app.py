@@ -302,7 +302,7 @@ st.markdown("<div style='margin-top: 16px;'></div>", unsafe_allow_html=True)
 control_col1, control_col2 = st.columns([3, 1])
 
 with control_col1:
-    language = st.selectbox("Language Context", options=["english", "hinglish"], index=0, label_visibility="collapsed")
+    language = st.selectbox("Language Context", options=["English", "Hinglish"], index=0, label_visibility="collapsed")
 with control_col2:
     process_btn = st.button("Process Asset", type="primary", use_container_width=True)
 
